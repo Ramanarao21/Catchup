@@ -1,54 +1,92 @@
-<div class="container mt-5">
-  <h2 class="text-center">Friends</h2>
+<div class="container py-5">
+  <h2 class="fw-bold text-center mb-4">
+    <i class="fas fa-users me-2"></i> Friends
+  </h2>
 
-  <!-- Search Bar -->
-  <div class="d-flex justify-content-between align-items-center">
-    <input type="text" placeholder="🔍 Search..." class="form-control w-25 mb-3">
+  <!-- Top Section with Search and Add Friend -->
+  
+    <div class="card-body p-4">
+      <div class="row g-3 align-items-center">
+        </div>
+        
+        <div class="container mt-3">
+  <div class="d-flex justify-content-center">
+    <div class="bg-white p-3 rounded shadow-sm" style="width: 60%;">
+      <div class="d-flex justify-content-center">
+        <%= form_with url: friendships_path, method: :post, local: true, class: "d-flex gap-2" do |f| %>
+          <%= f.collection_select :friendship, @users, :id, :name, 
+              { prompt: "Choose a friend" }, 
+              { class: "form-select w-auto", name: "friendship[friend_id]" } %>
+          <%= f.submit "Add Friend", class: "btn btn-primary px-4" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+ 
 
-    <span class="badge bg-warning text-dark">
-      ⚠️ <%= @pending_requests.count %> pending requests
-    </span>
-
-    <!-- Friend Request Form -->
-    <%= form_with url: friendships_path, method: :post, local: true, class: "d-flex" do |f| %>
-      <%= f.collection_select :friendship, @users, :id, :name, { prompt: "Choose a friend" }, class: "form-select me-2", name: "friendship[friend_id]" %>
-      <%= f.submit "➕ Add Friend", class: "btn btn-primary" %>
-    <% end %>
-    
+        <div class="col-md-3 text-end">
+          <% if @pending_requests.count > 0 %>
+            <div class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+              <i class="fas fa-bell me-1"></i>
+              <%= @pending_requests.count %> pending requests
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 
-
   <% if @users.any? %>
-  <h4>Available Users:</h4>
-  <ul class="list-group mb-3">
-    <% @users.each do |user| %>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <%= user.name %> (ID: <%= user.id %>)
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p class="text-muted">No users available to add.</p>
-<% end %>
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-3">Available Users</h4>
+        <div class="list-group list-group-flush">
+          <% @users.each do |user| %>
+            <div class="list-group-item border-0 d-flex justify-content-between align-items-center py-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fs-4 text-muted me-3"></i>
+                <span><%= user.name %></span>
+              </div>
+              <small class="text-muted">ID: <%= user.id %></small>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i>
+      No users available to add.
+    </div>
+  <% end %>
 
-
-  <!-- Friends List -->
-  <div class="row">
+  <!-- Friends Grid -->
+  <div class="row g-4 mb-4">
     <% @friends.each do |friend| %>
       <div class="col-md-6">
-        <div class="card p-3 mb-3 shadow-sm">
-          <div class="d-flex align-items-center">
-            <div class="me-3">
-              <img src="https://via.placeholder.com/50" alt="Profile Pic" class="rounded-circle">
-            </div>
-            <div>
-              <strong><%= friend.name %></strong>
-              <p class="text-muted">
-                <%= friend.friends.count %> Friends • <%= friend.posts.count %> Thoughts • Friend since <%= friend.created_at.strftime("%b '%y") %>
-              </p>
-            </div>
-            <div class="ms-auto">
-              <%= link_to "❌ Remove", friendship_path(friend), method: :delete, class: "btn btn-danger btn-sm" %>
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center">
+              <div class="me-3">
+              <%= image_tag "avatar.png", alt: "Profile Pic", class: "rounded-circle border", height: 50, width: "50%" %>
+
+
+              </div>
+              <div class="flex-grow-1">
+                <h5 class="fw-bold mb-1"><%= friend.name %></h5>
+                <p class="text-muted small mb-0">
+                  <i class="fas fa-users me-1"></i> <%= friend.friends.count %> Friends
+                  <span class="mx-2">•</span>
+                  <i class="fas fa-comment me-1"></i> <%= friend.posts.count %> Thoughts
+                  <span class="mx-2">•</span>
+                  <i class="fas fa-calendar me-1"></i> Friend since <%= friend.created_at.strftime("%b '%y") %>
+                </p>
+              </div>
+              <%= link_to friendship_path(friend), 
+                  method: :delete, 
+                  class: "btn btn-outline-danger btn-sm" do %>
+                <i class="fas fa-user-times"></i>
+              <% end %>
             </div>
           </div>
         </div>
@@ -56,35 +94,77 @@
     <% end %>
   </div>
 
-  <!-- Pending Friend Requests -->
-  <h3 class="mt-4">Pending Requests</h3>
-   <% if @pending_requests.any? %>
-    <% @pending_requests.each do |request| %>
-      <div class="d-flex justify-content-between align-items-center p-2 border rounded my-2">
-       <span><%= request.user.name %> sent you a friend request.</span>
-       <div>
-        <%= button_to "✅ Accept", accept_friendship_path(request), method: :patch, class: "btn btn-success btn-sm" %>
-        <%= button_to "❌ Reject", friendship_path(request), method: :delete, class: "btn btn-danger btn-sm" %>
-      </div>
+  <!-- Pending Requests -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <h3 class="fw-bold mb-4">
+        <i class="fas fa-user-clock me-2"></i> Pending Requests
+      </h3>
+      
+      <% if @pending_requests.any? %>
+        <div class="d-flex flex-column gap-3">
+          <% @pending_requests.each do |request| %>
+            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fs-4 text-muted me-3"></i>
+                <span class="fw-medium"><%= request.user.name %></span>
+              </div>
+              <div class="d-flex gap-2">
+                <%= button_to accept_friendship_path(request), 
+                    method: :patch, 
+                    class: "btn btn-success btn-sm px-3" do %>
+                  <i class="fas fa-check me-1"></i> Accept
+                <% end %>
+                <%= button_to friendship_path(request), 
+                    method: :delete, 
+                    class: "btn btn-outline-danger btn-sm px-3" do %>
+                  <i class="fas fa-times me-1"></i> Reject
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted">
+          <i class="fas fa-info-circle me-2"></i>
+          No pending requests.
+        </p>
+      <% end %>
     </div>
-  <% end %>
-  <% else %>
-  <p class="text-muted">No pending requests.</p>
-    <% end %>
+  </div>
 
+  <!-- Confirmed Friends List -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+      <h3 class="fw-bold mb-4">
+        <i class="fas fa-user-friends me-2"></i> Your Friends
+      </h3>
+      
+      <% if current_user.confirmed_friends.any? %>
+        <div class="list-group list-group-flush">
+          <% current_user.confirmed_friends.each do |friend| %>
+            <div class="list-group-item border-0 d-flex justify-content-between align-items-center py-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fs-4 text-muted me-3"></i>
+                <span class="fw-medium">
+                 <%= link_to friend.name, user_path(friend), class: "text-decoration-none text-dark" %>
+                </span>
 
-  <!-- Friends List in a Simple List -->
-  <h3 class="mt-4">Your Friends</h3>
-<% if current_user.confirmed_friends.any? %>
-  <ul class="list-group">
-    <% current_user.confirmed_friends.each do |friend| %>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <%= friend.name %>
-        <%= button_to "Remove Friend", friendship_path(friend), method: :delete, class: "btn btn-danger btn-sm" %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p class="text-muted">You have no friends yet.</p>
-<% end %>
-
+              </div>
+              <%= button_to friendship_path(friend), 
+                  method: :delete, 
+                  class: "btn btn-outline-danger btn-sm px-3" do %>
+                <i class="fas fa-user-times me-1"></i> Remove
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted">
+          <i class="fas fa-info-circle me-2"></i>
+          You have no friends yet.
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="container py-5">
+  <h2 class="fw-bold"><%= @user.name %>'s Profile</h2>
+  
+  <p>Email: <%= @user.email %></p>
+  <p>Friends Count: <%= @user.friends.count %></p>
+  <p>Joined: <%= @user.created_at.strftime("%B %d, %Y") %></p>
+
+  <hr>
+
+  <h3 class="fw-bold">Posts by <%= @user.name %></h3>
+
+  <% if @posts.any? %>
+    <% @posts.each do |post| %>
+      <div class="card my-3 shadow-sm">
+        <div class="card-body">
+          <p class="mb-1"><%= post.content %></p>
+          <small class="text-muted">Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-muted">No posts yet.</p>
+  <% end %>
+</div>

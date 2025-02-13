@@ -16,4 +16,5 @@ class User < ApplicationRecord
   has_many :confirmed_friends, through: :confirmed_friendships, source: :friend
 
   has_many :posts
+  has_many :thoughts
 end

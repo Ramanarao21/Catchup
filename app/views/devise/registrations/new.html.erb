@@ -1,46 +1,96 @@
-<div class="container mt-5">
-  <h2 class="text-center">Sign Up</h2>
-  
-  <% if resource.errors.any? %>
-    <div class="alert alert-danger">
-      <ul>
-        <% resource.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="card p-4 shadow">
-    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-      
-      <div class="field">
-        <%= f.label :name %><br>
-        <%= f.text_field :name, required: true, class: "form-control" %>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">Create your account</h2>
+        <p class="text-muted">Join our community today</p>
       </div>
 
-      <div class="form-group">
-        <%= f.label :email %>
-        <%= f.email_field :email, class: "form-control" %>
+      <% if resource.errors.any? %>
+        <div class="alert alert-danger alert-dismissible fade show">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <div>
+              <strong>Please correct the following:</strong>
+              <ul class="mb-0 mt-2">
+                <% resource.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+            <div class="mb-4">
+              <%= f.label :name, class: "form-label fw-medium" %>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-user text-muted"></i>
+                </span>
+                <%= f.text_field :name, required: true, class: "form-control border-start-0 ps-0", placeholder: "Enter your full name" %>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <%= f.label :email, class: "form-label fw-medium" %>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-envelope text-muted"></i>
+                </span>
+                <%= f.email_field :email, class: "form-control border-start-0 ps-0", placeholder: "you@example.com" %>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <%= f.label :password, class: "form-label fw-medium" %>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-lock text-muted"></i>
+                </span>
+                <%= f.password_field :password, class: "form-control border-start-0 ps-0", 
+                    id: "password_field", 
+                    placeholder: "Create a password" %>
+              </div>
+              <div class="form-text">
+                <i class="fas fa-info-circle me-1"></i>
+                Password must be at least 6 characters
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <%= f.label :password_confirmation, class: "form-label fw-medium" %>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-lock text-muted"></i>
+                </span>
+                <%= f.password_field :password_confirmation, 
+                    class: "form-control border-start-0 ps-0", 
+                    placeholder: "Confirm your password" %>
+              </div>
+            </div>
+
+            <%= f.submit "Create Account", class: "btn btn-primary btn-lg w-100 mb-3" %>
+            
+            <div class="text-center text-muted">
+              Already have an account? 
+              <%= link_to "Sign in", new_session_path(resource_name), class: "text-decoration-none" %>
+            </div>
+          <% end %>
+        </div>
       </div>
 
-      <div class="form-group">
-        <%= f.label :password %>
-        <%= f.password_field :password, class: "form-control", id: "password_field" %>
-        <small id="password_help" class="text-muted">
-          Password must be at least 6 characters.
+      <div class="text-center mt-4">
+        <small class="text-muted">
+          By signing up, you agree to our 
+          <a href="#" class="text-decoration-none">Terms of Service</a> and 
+          <a href="#" class="text-decoration-none">Privacy Policy</a>
         </small>
       </div>
-
-      <div class="form-group">
-        <%= f.label :password_confirmation %>
-        <%= f.password_field :password_confirmation, class: "form-control" %>
-      </div>
-
-      <div class="mt-3">
-        <%= f.submit "Sign Up", class: "btn btn-success w-100" %>
-      </div>
-
-    <% end %>
+    </div>
   </div>
 </div>

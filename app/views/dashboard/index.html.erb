@@ -1,36 +1,66 @@
-<div class="container mt-4">
-  <header class="d-flex justify-content-between align-items-center">
-    <h2>Catchup</h2>
-    <nav>
-      <%= link_to "Home", root_path, class: "btn btn-primary" %>
-      <%= link_to "Friends", friendships_path, class: "btn btn-outline-primary ms-2" %>
-    </nav>
-  </header>
-
-  <div class="text-end my-3">
-    <%= link_to "+ Share a thought", new_post_path, class: "btn btn-outline-primary" %>
+<div class="container py-4">
+  <div class="text-end mb-4">
+    <%= link_to new_post_path, class: "btn btn-primary px-4" do %>
+      <i class="fas fa-plus me-2"></i> Share a thought
+    <% end %>
   </div>
 
-  <div class="card shadow p-3">
-    <h3>Latest Thoughts</h3>
-    
-    <% @posts.each do |post| %>
-      <div class="d-flex align-items-start border-bottom pb-3 mb-3">
-        <%= image_tag 'avatar.png', class: "rounded-circle", width: 50, height: 50 %>
-        
-        <div class="flex-grow-1">
-          <div class="d-flex justify-content-between align-items-center">
-            <h5 class="bg-primary text-white p-2 rounded"><%= post.user.name %></h5>
-            <small class="text-muted"><%= time_ago_in_words(post.created_at) %> ago</small>
-          </div>
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+      <h3 class="fw-bold mb-4">
+        <i class="fas fa-stream me-2"></i> Latest Thoughts
+      </h3>
+      
+      <% if @posts.any? %>
+        <% @posts.each do |post| %>
+          <div class="d-flex align-items-start <%= 'border-bottom' unless post == @posts.last %> pb-4 mb-4">
+            <%= image_tag 'avatar.png', class: "rounded-circle", width: 48, height: 48 %>
+            
+            <div class="ms-3 flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center">
+                  <h5 class="bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill m-0 fw-bold">
+                    <%= post.user.name %>
+                  </h5>
+                  <small class="text-muted ms-3">
+                    <i class="far fa-clock me-1"></i>
+                    <%= time_ago_in_words(post.created_at) %> ago
+                  </small>
+                </div>
+                <div class="dropdown">
+                  <button class="btn btn-link text-muted p-0" data-bs-toggle="dropdown">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-share me-2"></i>Share</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-flag me-2"></i>Report</a></li>
+                  </ul>
+                </div>
+              </div>
 
-          <p><%= post.content %></p>
+              <p class="mb-3 text-dark"><%= post.content %></p>
 
-          <div class="d-flex align-items-center">
-            <span>👍 <%= post.likes_count %> likes</span>
+              <div class="d-flex align-items-center">
+                <button class="btn btn-link text-decoration-none p-0 text-muted">
+                  <i class="far fa-heart me-1"></i>
+                  <%= post.likes_count %> likes
+                </button>
+                <button class="btn btn-link text-decoration-none p-0 text-muted ms-4">
+                  <i class="far fa-comment me-1"></i>
+                  Comment
+                </button>
+              </div>
+            </div>
           </div>
+        <% end %>
+      <% else %>
+        <div class="text-center py-5">
+          <i class="fas fa-user-friends text-secondary fs-1 mb-3"></i>
+          <p class="fs-5 text-muted">No posts to show yet.</p>
+          <p class="text-muted">Make a friend or wait for a friend to share a thought.</p>
+          <%= link_to "Share your own thought", new_post_path, class: "btn btn-primary mt-3 px-4" %>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 </div>

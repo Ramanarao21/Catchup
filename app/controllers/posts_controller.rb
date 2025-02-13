@@ -17,5 +17,8 @@ class PostsController < ApplicationController
     def post_params
       params.require(:post).permit(:content)
     end
+    def index
+      @posts = Post.all
+    end
   end
   

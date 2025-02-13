@@ -4,9 +4,12 @@ class FriendshipsController < ApplicationController
   def index
     @users = User.where.not(id: current_user.id)
                  .where.not(id: current_user.friends.pluck(:id)) # Exclude existing friends
+  
     @pending_requests = Friendship.where(friend: current_user, accepted: false) # Requests received
-    @friends = current_user.friendships.where(accepted: true).map(&:friend) # Accepted friendships
+    @friends = current_user.friendships.where(accepted: true).includes(:friend => :thoughts).map(&:friend)
+
   end
+  
   
   
 
@@ -31,8 +34,12 @@ class FriendshipsController < ApplicationController
 
   def accept
     friendship = Friendship.find(params[:id])
-    
-    if friendship.update(status: "accepted")
+  
+    if friendship.friend == current_user && !friendship.accepted
+      friendship.update(accepted: true)
+
+      Friendship.create(user: friendship.friend, friend: friendship.user, accepted: true)
+      
       flash[:notice] = "Friend request accepted!"
     else
       flash[:alert] = "Something went wrong."

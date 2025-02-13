@@ -21,4 +21,7 @@ Rails.application.routes.draw do
       delete :reject # Reject friend request (optional)
     end
   end
+
+  # **Add this line to enable user profiles**
+  resources :users, only: [:show]
 end
