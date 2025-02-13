@@ -1,7 +1,24 @@
 <div class="container mt-5">
   <h2 class="text-center">Sign Up</h2>
+  
+  <% if resource.errors.any? %>
+    <div class="alert alert-danger">
+      <ul>
+        <% resource.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <div class="card p-4 shadow">
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      
+      <div class="field">
+        <%= f.label :name %><br>
+        <%= f.text_field :name, required: true, class: "form-control" %>
+      </div>
+
       <div class="form-group">
         <%= f.label :email %>
         <%= f.email_field :email, class: "form-control" %>
@@ -9,7 +26,10 @@
 
       <div class="form-group">
         <%= f.label :password %>
-        <%= f.password_field :password, class: "form-control" %>
+        <%= f.password_field :password, class: "form-control", id: "password_field" %>
+        <small id="password_help" class="text-muted">
+          Password must be at least 6 characters.
+        </small>
       </div>
 
       <div class="form-group">
@@ -20,6 +40,7 @@
       <div class="mt-3">
         <%= f.submit "Sign Up", class: "btn btn-success w-100" %>
       </div>
+
     <% end %>
   </div>
 </div>

@@ -1,0 +1,90 @@
+<div class="container mt-5">
+  <h2 class="text-center">Friends</h2>
+
+  <!-- Search Bar -->
+  <div class="d-flex justify-content-between align-items-center">
+    <input type="text" placeholder="🔍 Search..." class="form-control w-25 mb-3">
+
+    <span class="badge bg-warning text-dark">
+      ⚠️ <%= @pending_requests.count %> pending requests
+    </span>
+
+    <!-- Friend Request Form -->
+    <%= form_with url: friendships_path, method: :post, local: true, class: "d-flex" do |f| %>
+      <%= f.collection_select :friendship, @users, :id, :name, { prompt: "Choose a friend" }, class: "form-select me-2", name: "friendship[friend_id]" %>
+      <%= f.submit "➕ Add Friend", class: "btn btn-primary" %>
+    <% end %>
+    
+  </div>
+
+
+  <% if @users.any? %>
+  <h4>Available Users:</h4>
+  <ul class="list-group mb-3">
+    <% @users.each do |user| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <%= user.name %> (ID: <%= user.id %>)
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p class="text-muted">No users available to add.</p>
+<% end %>
+
+
+  <!-- Friends List -->
+  <div class="row">
+    <% @friends.each do |friend| %>
+      <div class="col-md-6">
+        <div class="card p-3 mb-3 shadow-sm">
+          <div class="d-flex align-items-center">
+            <div class="me-3">
+              <img src="https://via.placeholder.com/50" alt="Profile Pic" class="rounded-circle">
+            </div>
+            <div>
+              <strong><%= friend.name %></strong>
+              <p class="text-muted">
+                <%= friend.friends.count %> Friends • <%= friend.posts.count %> Thoughts • Friend since <%= friend.created_at.strftime("%b '%y") %>
+              </p>
+            </div>
+            <div class="ms-auto">
+              <%= link_to "❌ Remove", friendship_path(friend), method: :delete, class: "btn btn-danger btn-sm" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Pending Friend Requests -->
+  <h3 class="mt-4">Pending Requests</h3>
+   <% if @pending_requests.any? %>
+    <% @pending_requests.each do |request| %>
+      <div class="d-flex justify-content-between align-items-center p-2 border rounded my-2">
+       <span><%= request.user.name %> sent you a friend request.</span>
+       <div>
+        <%= button_to "✅ Accept", accept_friendship_path(request), method: :patch, class: "btn btn-success btn-sm" %>
+        <%= button_to "❌ Reject", friendship_path(request), method: :delete, class: "btn btn-danger btn-sm" %>
+      </div>
+    </div>
+  <% end %>
+  <% else %>
+  <p class="text-muted">No pending requests.</p>
+    <% end %>
+
+
+  <!-- Friends List in a Simple List -->
+  <h3 class="mt-4">Your Friends</h3>
+<% if current_user.confirmed_friends.any? %>
+  <ul class="list-group">
+    <% current_user.confirmed_friends.each do |friend| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <%= friend.name %>
+        <%= button_to "Remove Friend", friendship_path(friend), method: :delete, class: "btn btn-danger btn-sm" %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p class="text-muted">You have no friends yet.</p>
+<% end %>
+
